@@ -1,71 +1,118 @@
-//time
-const timeDoc = document.querySelector('.time');
+//================================= watch and date =========================================
+const watch = document.querySelector('.time');
+const calendar = document.querySelector('.date');
 
 function showTime() {
     const date = new Date();
-    timeDoc.textContent = date.toLocaleTimeString();
-    setTimeout(showTime, 1000);
+    watch.textContent = date.toLocaleTimeString();
+    showDate(date);
+    showGreeting(date);
+    showName();
+    setInterval(showTime, 1000);
 }
-showTime();
 
-//date
-const dateDoc = document.querySelector('.date');
-
-function showDate() {
-    const date = new Date();
-    //todo future || const options = {month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZone: 'UTC'};
-    dateDoc.textContent = date.toLocaleDateString(); //('de-De', options)
-    setTimeout(showDate, 1000);
+function showDate(date) {
+    const options = {weekday: 'long', month: 'long', day: 'numeric'};
+    calendar.textContent = date.toLocaleDateString('en-US', options);
 }
-showDate();
 
-//time of day
+
+// ====================================== greeting ======================================
+
 const greeting = document.querySelector('.greeting');
 
-function getTimeOfDay() {
-    const date = new Date();
+function getTimeOfDay(date) {
     const hours = date.getHours();
 
-    if (hours === 6 || 7 || 8 || 9 || 10 || 11) {
-        greeting.textContent = 'Good morning';
-    } if (hours === 12 || 13 || 14 || 15 || 16 || 17) {
-        greeting.textContent = 'Good afternoon';
-    } if (hours === 18 || 19 || 20 || 21 || 22 || 23) {
-        greeting.textContent = 'Good evening';
+    if (hours >= 6 && hours < 12) {
+        return 'morning';
+    } else if (hours >= 12 && hours < 18) {
+        return 'afternoon';
+    } else if (hours >= 18 && hours < 24) {
+        return 'evening';
     } else {
-        greeting.textContent = 'Good night';
+        return 'night';
     }
 }
-getTimeOfDay()
 
-//name + local storage
-const name = document.querySelector('.name');
-
-function setLocalStorage() {
-    localStorage.setItem('name', name.value);
+function showGreeting(date) {
+    const timeOfDay = getTimeOfDay(date);
+    greeting.textContent = `Good ${timeOfDay}`;
 }
-window.addEventListener('beforeunload', setLocalStorage)
 
-function getLocalStorage() {
-    if(localStorage.getItem('name')) {
-        name.value = localStorage.getItem('name');
+function showName() {
+    let greetingName = document.querySelector('.name');
+
+    if (!localStorage.getItem('name')) {
+        greetingName.placeholder = '[Enter name]';
     }
-}
-window.addEventListener('load', getLocalStorage)
 
-//background
+    greetingName.addEventListener('blur', function() {
+        greetingName.placeholder = '[Enter name]';
+    });
+
+    function setLocalStorage() {
+        localStorage.setItem('name', greetingName.value);
+    }
+    window.addEventListener('beforeunload', setLocalStorage);
+
+    function getLocalStorage() {
+        if(localStorage.getItem('name')) {
+            greetingName.value = localStorage.getItem('name');
+        }
+    }
+    window.addEventListener('load', getLocalStorage);
+
+}
+
+showTime();
+
+
+// ====================================== slider ======================================
+
 const body = document.querySelector('body');
 
-body.style.backgroundImage = "url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/evening/10.jpg')";
-
-//get random num
-
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
+function getRandomNum(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+let randomNum = getRandomNum(1, 20);
+
+function getSlidePrev() {
+    if (randomNum > 1) {
+        randomNum--;
+    } else {
+        randomNum = 20;
+    }
+    setBg();
+}
+
+let slidePrev = document.querySelector('.slide-prev');
+slidePrev.addEventListener('click', getSlidePrev);
+
+function getSlideNext() {
+    if (randomNum < 20) {
+        randomNum++;
+    } else {
+        randomNum = 1;
+    }
+    setBg();
+}
+
+let slideNext = document.querySelector('.slide-next');
+slideNext.addEventListener('click', getSlideNext);
 
 function setBg() {
-    const timeOfDay = timeDoc;
-    const bgNum = getRandomInt(21).toString().padStart(2, '0');
+    const date = new Date();
+    const timeOfDay = getTimeOfDay(date);
+    const bgNum = String(`${randomNum}`).padStart(2, '0');
+    const imageLink = `https://raw.githubusercontent.com/pavel8lisenkov/momentum-images/assets/images/${timeOfDay}/${bgNum}.jpg`;
+    const img = document.createElement('img');
+    img.src = imageLink;
+    img.addEventListener('load',   function() {
+        body.style.backgroundImage = `url('${imageLink}')`;
+    });
 }
+
+setBg();
+
