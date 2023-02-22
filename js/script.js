@@ -53,12 +53,21 @@ function showName() {
 
     function setLocalStorage() {
         localStorage.setItem('name', greetingName.value);
+        if (city.textContent === '') {
+            localStorage.setItem('weatherCity', city.value)
+
+        }
+        else { localStorage.removeItem('city'); }
+
     }
     window.addEventListener('beforeunload', setLocalStorage);
 
     function getLocalStorage() {
         if(localStorage.getItem('name')) {
             greetingName.value = localStorage.getItem('name');
+        }
+        if (localStorage.getItem('city')) {
+            city.value = localStorage.getItem('weatherCity');
         }
     }
     window.addEventListener('load', getLocalStorage);
@@ -67,6 +76,11 @@ function showName() {
 
 showTime();
 
+// ====================================== onload ======================================
+
+    window.onload = function () {
+        city.value = 'Minsk'
+    }
 
 // ====================================== slider ======================================
 
@@ -121,25 +135,45 @@ setBg();
 const weatherIcon = document.querySelector('.weather-icon');
 const temperature = document.querySelector('.temperature');
 const weatherDescription = document.querySelector('.weather-description');
+const wind = document.querySelector('.wind');
+const humidity = document.querySelector('.humidity');
 const city = document.querySelector('.city');
 
 async function getWeather() {
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=ru&appid=628b3d945f6f599d6afd0a2320689c1f&units=metric`;
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=en&appid=628b3d945f6f599d6afd0a2320689c1f&units=metric`;
     const res = await fetch(url);
     const data = await res.json();
 
     weatherIcon.className = 'weather-icon owf';
     weatherIcon.classList.add(`owf-${data.weather[0].id}`);
     temperature.textContent = `${data.main.temp.toFixed(0)}°C`;
+    wind.textContent = `Wind speed: ${Math.round(data.wind.speed)} m/s`;
+    humidity.textContent = `Humidity: ${data.main.humidity}%`;
     weatherDescription.textContent = data.weather[0].description;
 }
 
 function setCity(event) {
     if (event.code === 'Enter') {
         getWeather();
-        city.blur();
+        setInterval(getWeather, 100);
     }
 }
 
 document.addEventListener('DOMContentLoaded', getWeather);
 city.addEventListener('keypress', setCity);
+
+
+// ====================================== quote of the day ======================================
+
+const quote = document.querySelector('.quote');
+const author = document.querySelector('.author');
+
+function getQuotes() {
+    const quotes = 'data.json';
+    fetch(quotes)
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+        });
+}
+getQuotes();
