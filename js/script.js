@@ -1,4 +1,6 @@
-//================================= watch and date =========================================
+alert('Просьба оценить работу через день после начала cross-check')
+
+// ================================= watch and date =========================================
 const watch = document.querySelector('.time');
 const calendar = document.querySelector('.date');
 
@@ -79,7 +81,8 @@ showTime();
 // ====================================== onload ======================================
 
     window.onload = function () {
-        city.value = 'Minsk'
+        city.value = 'Minsk';
+        getQuotes(randomNumForQuotes);
     }
 
 // ====================================== slider ======================================
@@ -167,13 +170,40 @@ city.addEventListener('keypress', setCity);
 
 const quote = document.querySelector('.quote');
 const author = document.querySelector('.author');
+const changeQuote = document.querySelector('.change-quote')
 
-function getQuotes() {
+let randomNumForQuotes = getRandomNum();
+
+async function getQuotes(randomNumForQuotes) {
     const quotes = 'data.json';
-    fetch(quotes)
-        .then(res => res.json())
-        .then(data => {
-            console.log(data);
-        });
+    const res = await fetch(quotes);
+    const data = await res.json();
+    quote.textContent = data[randomNumForQuotes][`text`]
+    author.textContent = data[randomNumForQuotes][`author`]
+    changeQuote.classList.add('add__quote-scale')
 }
-getQuotes();
+
+changeQuote.addEventListener('click', () => {
+    randomNumForQuotes = getRandomNum(0, 10);
+    getQuotes(randomNumForQuotes);
+});
+
+// ====================================== player ======================================
+
+const audio = document.querySelector('audio');
+const playBtn = document.querySelector('.play');
+const pauseBtn = document.querySelector('.pause');
+
+function playAudio() {
+    audio.currentTime = 0;
+    audio.play();
+}
+
+function pauseAudio() {
+    audio.pause();
+}
+
+playBtn.addEventListener('click', playAudio);
+pauseBtn.addEventListener('click', pauseAudio);
+
+let isPlay = false;

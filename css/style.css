@@ -9,6 +9,10 @@
   padding: 0;
 }
 
+li {
+  list-style-type: none;
+}
+
 body {
   min-width: 480px;
   min-height: 100vh;
@@ -108,6 +112,7 @@ body {
 
 .pause {
   background-image: url("../assets/svg/pause.svg");
+  display: none;
 }
 
 .play-prev {
