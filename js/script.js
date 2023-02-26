@@ -1,4 +1,4 @@
-alert('Просьба оценить работу через день после начала cross-check')
+alert('Просьба оценить работу через день после начала cross-check Discord: NikolaySivaev#9923')
 
 // ================================= watch and date =========================================
 const watch = document.querySelector('.time');
@@ -207,3 +207,4 @@ playBtn.addEventListener('click', playAudio);
 pauseBtn.addEventListener('click', pauseAudio);
 
 let isPlay = false;
+
