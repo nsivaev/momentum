@@ -1,4 +1,5 @@
-alert('Просьба оценить работу через день после начала cross-check Discord: NikolaySivaev#9923')
+
+alert('Занимаюсь переездом, просьба оценить работу 2 марта. Discord: NikolaySivaev#9923')
 
 // ================================= watch and date =========================================
 const watch = document.querySelector('.time');
@@ -80,9 +81,38 @@ showTime();
 
 // ====================================== onload ======================================
 
-    window.onload = function () {
+
+
+
+window.onload = function () {
         city.value = 'Minsk';
+        setCity();
+        getWeather();
         getQuotes(randomNumForQuotes);
+        addPlayList();
+
+        const playListTracks = document.querySelectorAll('.play-list');
+        playListTracks.forEach((track, index, tracks) => {
+            track.addEventListener('click', () => {
+                removePlayListTrack(playListTracks);
+                tracks[index].classList.toggle('pause')
+                if (playNum === index) {
+                    tracks[index].classList.toggle('pause')
+                    playAudio()
+                }
+                else {
+                    playNum = index;
+                    isPlay = false;
+                    playAudio()
+                }
+            })
+        })
+
+        const removePlayListTrack = (playListTracks) => {
+            playListTracks.forEach(track => {
+                track.classList.remove('pause');
+            })
+        }
     }
 
 // ====================================== slider ======================================
@@ -155,16 +185,34 @@ async function getWeather() {
     weatherDescription.textContent = data.weather[0].description;
 }
 
+
 function setCity(event) {
     if (event.code === 'Enter') {
-        getWeather();
-        setInterval(getWeather, 100);
+        if (city.value === '') {
+            error()
+        } else {
+            getWeather();
+        }
     }
 }
 
 document.addEventListener('DOMContentLoaded', getWeather);
 city.addEventListener('keypress', setCity);
 
+//error
+const weatherError = document.querySelector('.weather-error');
+
+function error() {
+    const errText = 'Error! City not found!';
+
+    weatherIcon.className = 'weather-icon owf';
+
+    weatherError.textContent = `${errText}`;
+    temperature.textContent = '';
+    wind.textContent = '';
+    humidity.textContent = '';
+    weatherDescription.textContent = '';
+}
 
 // ====================================== quote of the day ======================================
 
@@ -193,6 +241,7 @@ changeQuote.addEventListener('click', () => {
 const audio = document.querySelector('audio');
 const playBtn = document.querySelector('.play');
 const pauseBtn = document.querySelector('.pause');
+const playListContainer = document.querySelector('.play-list');
 
 function playAudio() {
     audio.currentTime = 0;
@@ -203,8 +252,70 @@ function pauseAudio() {
     audio.pause();
 }
 
+// Add click event listener on play button
+playBtn.addEventListener('click', function(){
+    // Hide play button
+    playBtn.style.display = "none";
+
+
+// Show pause button
+    pauseBtn.style.display = "block";
+});
+
+
+// Add click event listener on pause button
+pauseBtn.addEventListener('click', function(){
+    // Hide pause button
+    pauseBtn.style.display = "none";
+
+
+// Show play button
+    playBtn.style.display = "block";
+});
+
 playBtn.addEventListener('click', playAudio);
 pauseBtn.addEventListener('click', pauseAudio);
 
-let isPlay = false;
+function playNext() {
+    audio.pause(); // останавливаем предыдущее аудио
+    const audioElements = document.querySelectorAll('audio');
+    let currentIndex = 0;
+
+    for (let i = 0; i < audioElements.length; i++) {
+        if (audioElements[i].paused === false) {
+            currentIndex = i;
+            break;
+        }
+    }
+
+    if (currentIndex === audioElements.length - 1) {
+        audioElements[0].play();
+    } else {
+        audioElements[currentIndex + 1].play();
+    }
+}
+//
+// let currentTrack = 0;
+//
+// function prev(){
+//     currentTrack--;
+//     if (currentTrack < 0){
+//         currentTrack = tracks.length - 1;
+//     }
+//     audio.src = tracks[currentTrack];
+//     audio.play();
+//     playBtn.className = 'pause';
+// }
+//
+// function next(){
+//     currentTrack++;
+//     if (currentTrack > tracks.length - 1){
+//         currentTrack = 0;
+//     }
+//     audio.src = tracks[currentTrack];
+//     audio.play();
+//     playBtn.className = 'pause';
+// }
+
+document.querySelector('.play-next').addEventListener('click', playNext);
 
