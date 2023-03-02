@@ -1,5 +1,6 @@
-
-alert('Занимаюсь переездом, просьба оценить работу 2 марта. Discord: NikolaySivaev#9923')
+// ==============================================================================
+// нет готового плеера, нет quotes при загрузке страницы (при нажатии на кнопку обновить – есть), нет ошибки при вводе неверного города
+// ==============================================================================
 
 // ================================= watch and date =========================================
 const watch = document.querySelector('.time');
@@ -21,7 +22,6 @@ function showDate(date) {
 
 
 // ====================================== greeting ======================================
-
 const greeting = document.querySelector('.greeting');
 
 function getTimeOfDay(date) {
@@ -40,7 +40,7 @@ function getTimeOfDay(date) {
 
 function showGreeting(date) {
     const timeOfDay = getTimeOfDay(date);
-    greeting.textContent = `Good ${timeOfDay}`;
+    greeting.textContent = `Good ${timeOfDay},`;
 }
 
 function showName() {
@@ -79,11 +79,8 @@ function showName() {
 
 showTime();
 
+
 // ====================================== onload ======================================
-
-
-
-
 window.onload = function () {
         city.value = 'Minsk';
         setCity();
@@ -115,8 +112,8 @@ window.onload = function () {
         }
     }
 
-// ====================================== slider ======================================
 
+// ====================================== slider ======================================
 const body = document.querySelector('body');
 
 function getRandomNum(min, max) {
@@ -163,8 +160,8 @@ function setBg() {
 
 setBg();
 
-// ====================================== weather ======================================
 
+// ====================================== weather ======================================
 const weatherIcon = document.querySelector('.weather-icon');
 const temperature = document.querySelector('.temperature');
 const weatherDescription = document.querySelector('.weather-description');
@@ -184,7 +181,6 @@ async function getWeather() {
     humidity.textContent = `Humidity: ${data.main.humidity}%`;
     weatherDescription.textContent = data.weather[0].description;
 }
-
 
 function setCity(event) {
     if (event.code === 'Enter') {
@@ -214,8 +210,27 @@ function error() {
     weatherDescription.textContent = '';
 }
 
-// ====================================== quote of the day ======================================
 
+// ======================================DOMContentLoaded======================================
+document.addEventListener('DOMContentLoaded', getWeather);
+//city.addEventListener('change', () => {getWeather(city.value)})
+city.addEventListener('keypress', setCity);
+
+function setLocalWeatherStorage() {
+    localStorage.setItem('city', city.value);
+}
+window.addEventListener('beforeunload', setLocalWeatherStorage);
+
+function getLocalWeatherStorage() {
+    if(localStorage.getItem('city')) {
+        city.value = localStorage.getItem('city');
+    }
+    getWeather();
+}
+window.addEventListener('load', getLocalWeatherStorage);
+
+
+// ====================================== quote of the day ======================================
 const quote = document.querySelector('.quote');
 const author = document.querySelector('.author');
 const changeQuote = document.querySelector('.change-quote')
@@ -237,7 +252,6 @@ changeQuote.addEventListener('click', () => {
 });
 
 // ====================================== player ======================================
-
 const audio = document.querySelector('audio');
 const playBtn = document.querySelector('.play');
 const pauseBtn = document.querySelector('.pause');
@@ -256,19 +270,14 @@ function pauseAudio() {
 playBtn.addEventListener('click', function(){
     // Hide play button
     playBtn.style.display = "none";
-
-
 // Show pause button
     pauseBtn.style.display = "block";
 });
-
 
 // Add click event listener on pause button
 pauseBtn.addEventListener('click', function(){
     // Hide pause button
     pauseBtn.style.display = "none";
-
-
 // Show play button
     playBtn.style.display = "block";
 });
@@ -294,28 +303,4 @@ function playNext() {
         audioElements[currentIndex + 1].play();
     }
 }
-//
-// let currentTrack = 0;
-//
-// function prev(){
-//     currentTrack--;
-//     if (currentTrack < 0){
-//         currentTrack = tracks.length - 1;
-//     }
-//     audio.src = tracks[currentTrack];
-//     audio.play();
-//     playBtn.className = 'pause';
-// }
-//
-// function next(){
-//     currentTrack++;
-//     if (currentTrack > tracks.length - 1){
-//         currentTrack = 0;
-//     }
-//     audio.src = tracks[currentTrack];
-//     audio.play();
-//     playBtn.className = 'pause';
-// }
-
 document.querySelector('.play-next').addEventListener('click', playNext);
-

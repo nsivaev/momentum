@@ -9,6 +9,16 @@
   padding: 0;
 }
 
+a {
+  color: white;
+  padding-top: 10px;
+  text-decoration: none;
+}
+
+.footer_links {
+  margin-left: auto;
+}
+
 li {
   list-style-type: none;
 }
